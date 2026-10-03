@@ -1,0 +1,93 @@
+<template>
+  <NavBar />
+  <div class="container">
+    <h1>Dados de Treino</h1>
+    <p class="subtitle">Registre seus treinos e associe a um profissional</p>
+
+    <div v-if="mensagem" class="alert">{{ mensagem }}</div>
+
+    <div class="grid-form-list">
+      <form class="form-card" @submit.prevent="salvar">
+        <label>Nome do treino</label>
+        <input v-model="form.nome_treino" placeholder="Ex: Treino de pernas" required />
+
+        <label>Tipo</label>
+        <select v-model="form.tipo" required>
+          <option value="">Selecione</option>
+          <option>Força</option>
+          <option>Cardio</option>
+          <option>Mobilidade</option>
+          <option>Funcional</option>
+        </select>
+
+        <label>Duração (min)</label>
+        <input v-model="form.duracao_min" type="number" min="0" />
+
+        <label>Data</label>
+        <input v-model="form.data_treino" type="date" />
+
+        <label>Profissional responsável</label>
+        <select v-model="form.profissional_id">
+          <option value="">Nenhum / autônomo</option>
+          <option v-for="p in profissionais" :key="p.id" :value="p.id">{{ p.nome }} ({{ p.especialidade }})</option>
+        </select>
+
+        <label>Observações</label>
+        <textarea v-model="form.observacoes" rows="2"></textarea>
+
+        <button class="btn-primary" type="submit">Salvar treino</button>
+      </form>
+
+      <div class="list-card">
+        <h3>Treinos registrados</h3>
+        <p v-if="treinos.length === 0" class="sub">Nenhum treino registrado ainda.</p>
+        <ul class="lista" v-else>
+          <li v-for="t in treinos" :key="t.id">
+            <strong>{{ t.nome_treino }}</strong>
+            <span>{{ t.tipo }} · {{ t.data_treino }}<template v-if="t.duracao_min"> · {{ t.duracao_min }} min</template></span>
+            <p v-if="t.profissional_nome" class="sub">Com {{ t.profissional_nome }}</p>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script setup>
+import { onMounted, reactive, ref } from 'vue'
+import NavBar from './NavBar.vue'
+import { api } from '../services/api'
+
+const treinos = ref([])
+const profissionais = ref([])
+const mensagem = ref('')
+const form = reactive({
+  nome_treino: '', tipo: '', duracao_min: '', data_treino: new Date().toISOString().slice(0, 10),
+  profissional_id: '', observacoes: '',
+})
+
+async function carregar() {
+  const [{ treinos: listaTreinos }, { profissionais: listaProfissionais }] = await Promise.all([
+    api.listarTreinos(),
+    api.listarProfissionais(),
+  ])
+  treinos.value = listaTreinos
+  profissionais.value = listaProfissionais
+}
+
+async function salvar() {
+  try {
+    await api.criarTreino(form)
+    mensagem.value = 'Treino registrado com sucesso!'
+    form.nome_treino = ''
+    form.tipo = ''
+    form.duracao_min = ''
+    form.observacoes = ''
+    await carregar()
+  } catch (e) {
+    mensagem.value = e.message
+  }
+}
+
+onMounted(carregar)
+</script>

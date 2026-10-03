@@ -1,0 +1,69 @@
+<template>
+  <NavBar />
+  <div class="container">
+    <h1>Cadastro de Dieta</h1>
+    <p class="subtitle">Registre suas refeições e acompanhe as calorias</p>
+
+    <div v-if="mensagem" class="alert">{{ mensagem }}</div>
+
+    <div class="grid-form-list">
+      <form class="form-card" @submit.prevent="salvar">
+        <label>Nome da refeição</label>
+        <input v-model="form.nome_refeicao" placeholder="Ex: Café da manhã" required />
+
+        <label>Alimentos</label>
+        <textarea v-model="form.alimentos" rows="3" placeholder="Ex: 2 ovos, aveia, banana" required></textarea>
+
+        <label>Calorias (kcal)</label>
+        <input v-model="form.calorias" type="number" min="0" />
+
+        <label>Data</label>
+        <input v-model="form.data_refeicao" type="date" />
+
+        <button class="btn-primary" type="submit">Salvar refeição</button>
+      </form>
+
+      <div class="list-card">
+        <h3>Refeições registradas</h3>
+        <p v-if="dietas.length === 0" class="sub">Nenhuma refeição registrada ainda.</p>
+        <ul class="lista" v-else>
+          <li v-for="d in dietas" :key="d.id">
+            <strong>{{ d.nome_refeicao }}</strong>
+            <span>{{ d.data_refeicao }}<template v-if="d.calorias"> · {{ d.calorias }} kcal</template></span>
+            <p class="sub">{{ d.alimentos }}</p>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script setup>
+import { onMounted, reactive, ref } from 'vue'
+import NavBar from './NavBar.vue'
+import { api } from '../services/api'
+
+const dietas = ref([])
+const mensagem = ref('')
+const form = reactive({ nome_refeicao: '', alimentos: '', calorias: '', data_refeicao: new Date().toISOString().slice(0, 10) })
+
+async function carregar() {
+  const { dietas: lista } = await api.listarDietas()
+  dietas.value = lista
+}
+
+async function salvar() {
+  try {
+    await api.criarDieta(form)
+    mensagem.value = 'Refeição registrada com sucesso!'
+    form.nome_refeicao = ''
+    form.alimentos = ''
+    form.calorias = ''
+    await carregar()
+  } catch (e) {
+    mensagem.value = e.message
+  }
+}
+
+onMounted(carregar)
+</script>
