@@ -46,6 +46,7 @@
             <strong>{{ t.nome_treino }}</strong>
             <span>{{ t.tipo }} · {{ t.data_treino }}<template v-if="t.duracao_min"> · {{ t.duracao_min }} min</template></span>
             <p v-if="t.profissional_nome" class="sub">Com {{ t.profissional_nome }}</p>
+            <button type="button" class="btn-excluir" @click="excluir(t.id)">Excluir</button>
           </li>
         </ul>
       </div>
@@ -89,5 +90,31 @@ async function salvar() {
   }
 }
 
+async function excluir(id) {
+  if (!confirm('Excluir este treino?')) return
+
+  try {
+    await api.excluirTreino(id)
+    mensagem.value = 'Treino excluído com sucesso!'
+    await carregar()
+  } catch (e) {
+    mensagem.value = e.message
+  }
+}
+
 onMounted(carregar)
 </script>
+
+<style scoped>
+.btn-excluir {
+  margin-top: 8px;
+  background: transparent;
+  color: #ff8080;
+  border: 1px solid #d95757;
+  border-radius: 8px;
+  padding: 6px 14px;
+  font-size: 13px;
+  cursor: pointer;
+}
+.btn-excluir:hover { background: #d95757; color: #fff; }
+</style>

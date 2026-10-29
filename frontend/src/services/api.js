@@ -30,10 +30,13 @@ export const api = {
 
   listarDietas: () => chamar('/dieta/index.php'),
   criarDieta: (dieta) => chamar('/dieta/index.php', { method: 'POST', body: JSON.stringify(dieta) }),
+  excluirDieta: (id) => chamar(`/dieta/index.php?id=${id}`, { method: 'DELETE' }),
 
   listarTreinos: () => chamar('/treino/index.php'),
+  excluirTreino: (id) => chamar(`/treino/index.php?id=${id}`, { method: 'DELETE' }),
   criarTreino: (treino) => chamar('/treino/index.php', { method: 'POST', body: JSON.stringify(treino) }),
-
+  
+  
   listarEvolucao: () => chamar('/evolucao/index.php'),
   criarEvolucao: (registro) => chamar('/evolucao/index.php', { method: 'POST', body: JSON.stringify(registro) }),
 

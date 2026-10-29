@@ -31,6 +31,15 @@ class Treino
         return (int) $pdo->lastInsertId();
     }
 
+    public static function excluir(int $id, int $usuarioId): bool
+    {
+        $pdo = getConnection();
+        $stmt = $pdo->prepare('DELETE FROM treinos WHERE id = :id AND usuario_id = :usuario_id');
+        $stmt->execute(['id' => $id, 'usuario_id' => $usuarioId]);
+
+        return $stmt->rowCount() > 0;
+    }
+
     public static function listarPorUsuario(int $usuarioId): array
     {
         $pdo = getConnection();

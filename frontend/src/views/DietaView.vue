@@ -31,6 +31,7 @@
             <strong>{{ d.nome_refeicao }}</strong>
             <span>{{ d.data_refeicao }}<template v-if="d.calorias"> · {{ d.calorias }} kcal</template></span>
             <p class="sub">{{ d.alimentos }}</p>
+            <button type="button" class="btn-excluir" @click="excluir(d.id)">Excluir</button>
           </li>
         </ul>
       </div>
@@ -65,5 +66,31 @@ async function salvar() {
   }
 }
 
+async function excluir(id) {
+  if (!confirm('Excluir esta refeição?')) return
+
+  try {
+    await api.excluirDieta(id)
+    mensagem.value = 'Refeição excluída com sucesso!'
+    await carregar()
+  } catch (e) {
+    mensagem.value = e.message
+  }
+}
+
 onMounted(carregar)
 </script>
+
+<style scoped>
+.btn-excluir {
+  margin-top: 8px;
+  background: transparent;
+  color: #ff8080;
+  border: 1px solid #d95757;
+  border-radius: 8px;
+  padding: 6px 14px;
+  font-size: 13px;
+  cursor: pointer;
+}
+.btn-excluir:hover { background: #d95757; color: #fff; }
+</style>

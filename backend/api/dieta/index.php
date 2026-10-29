@@ -19,5 +19,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     responder(['id' => $id], 201);
 }
 
+if ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
+    $id = (int) ($_GET['id'] ?? 0);
+
+    if ($id <= 0 || !Dieta::excluir($id, $usuarioId)) {
+        responder(['erro' => 'Refeição não encontrada'], 404);
+    }
+
+    responder(['ok' => true]);
+}
+
 // GET: lista as dietas do usuário logado
 responder(['dietas' => Dieta::listarPorUsuario($usuarioId)]);

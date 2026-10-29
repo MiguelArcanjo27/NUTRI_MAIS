@@ -23,4 +23,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     responder(['id' => $id], 201);
 }
 
+if ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
+    $id = (int) ($_GET['id'] ?? 0);
+
+    if ($id <= 0 || !Treino::excluir($id, $usuarioId)) {
+        responder(['erro' => 'Treino não encontrado'], 404);
+    }
+
+    responder(['ok' => true]);
+}
+
 responder(['treinos' => Treino::listarPorUsuario($usuarioId)]);
