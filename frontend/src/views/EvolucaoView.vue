@@ -1,5 +1,6 @@
 <template>
   <NavBar />
+  <div class="auth-wrapper">
   <div class="container">
     <h1>Demonstração de Evolução</h1>
     <p class="subtitle">Acompanhe peso e percentual de gordura ao longo do tempo</p>
@@ -31,6 +32,7 @@
         </svg>
       </div>
     </div>
+  </div>
   </div>
 </template>
 
@@ -77,5 +79,53 @@ onMounted(carregar)
 </script>
 
 <style scoped>
+.auth-wrapper {
+  --green: #80e052;
+  --green-light: #a0f078;
+  --green-dark: #183d27;
+  --text: #f4f8f3;
+  --muted: #a4b7a8;
+
+  position: relative;
+  isolation: isolate;
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  box-sizing: border-box;
+  padding: 48px;
+  background:
+    radial-gradient(ellipse at 76% 8%, #315c32 0%, transparent 34%),
+    radial-gradient(ellipse at 13% 82%, #123b25 0%, transparent 36%),
+    linear-gradient(125deg, #06150d 0%, #0b2013 50%, #07130c 100%);
+  color: var(--text);
+  font-family: Inter, system-ui, -apple-system, sans-serif;
+}
+
+/* Brilhos ambientais */
+.background-glow {
+  position: absolute;
+  z-index: -1;
+  width: 450px;
+  height: 450px;
+  border-radius: 50%;
+  filter: blur(110px);
+  opacity: 0.17;
+  pointer-events: none;
+}
+
+.glow-top {
+  top: -250px;
+  right: 8%;
+  background: #8af45e;
+}
+
+.glow-bottom {
+  bottom: -300px;
+  left: 25%;
+  background: #178a51;
+}
 .grafico { width: 100%; height: 120px; }
 </style>
